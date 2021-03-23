@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Download latest version of Mattermost
+# Read input for desired Mattermost version to download
 read -p "Enter new Mattermost version number: " MMVERSION
 
 # Check to make sure URL is up before continuing
@@ -19,7 +19,7 @@ else
 	exit 1
 fi
 
-# Pull down lastest version of Mattermost
+# Download Mattermost
 wget https://releases.mattermost.com/$MMVERSION/mattermost-$MMVERSION-linux-amd64.tar.gz
 
 
