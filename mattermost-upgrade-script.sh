@@ -114,18 +114,18 @@ echo -e "\e[33m[ INFO ]\e[0m"
 echo -e "Changing ownership of new Mattermost files to Mattermost user.\n"
 
 echo -e "\e[36m[ COMMAND ]\e[0m"
-echo -e "sudo chown -hR mattermost:mattermost /home/keith/mattermost-upgrade/\n"
-sudo chown -hR mattermost:mattermost /home/keith/mattermost-upgrade/
+echo -e "sudo chown -hR mattermost:mattermost ~/mattermost-upgrade/\n"
+sudo chown -hR mattermost:mattermost ~/mattermost-upgrade/
 
 # Copy new files to installation directory and remove temporary files
 echo -e "\e[33m[ INFO ]\e[0m"
 echo -e "Copy new files to installation directory and remove temporary files.\n"
 
 echo -e "\e[36m[ COMMAND ]\e[0m"
-echo -e "sudo cp -an /home/keith/mattermost-upgrade/. mattermost/"
-echo -e "sudo rm -r /home/keith/mattermost-upgrade/\n"
-sudo cp -an /home/keith/mattermost-upgrade/. mattermost/
-sudo rm -r /home/keith/mattermost-upgrade/
+echo -e "sudo cp -an ~/mattermost-upgrade/. mattermost/"
+echo -e "sudo rm -r ~/mattermost-upgrade/\n"
+sudo cp -an ~/mattermost-upgrade/. mattermost/
+sudo rm -r ~/mattermost-upgrade/
 
 # Active CAP_NET_BIND_SERVICE to allow Mattermost to bind to low ports - uncomment the below commands if the Mattermost instance is serving web requests
 #echo -e "\e[33m[ INFO ]\e[0m"
