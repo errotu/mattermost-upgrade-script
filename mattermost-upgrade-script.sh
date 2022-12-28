@@ -76,6 +76,14 @@ echo "tar -xf mattermost-$MMVERSION-linux-amd64.tar.gz --transform='s,^[^/]\+,\0
 echo
 tar -xf mattermost-$MMVERSION-linux-amd64.tar.gz --transform='s,^[^/]\+,\0-upgrade,'
 
+# Remove downloaded file
+echo -e "\e[33m[ INFO ]\e[0m"
+echo -e "Removing downloaded Mattermost file.\n"
+
+echo -e "\e[36m[ COMMAND ]\e[0m"
+echo "rm mattermost-$MMVERSION-linux-amd64.tar.gz"
+rm mattermost-$MMVERSION-linux-amd64.tar.gz
+
 # Stop Mattermost service via SystemCTL
 echo -e "\e[33m[ INFO ]\e[0m"
 echo -e "Processing upgrade of Mattermost. Mattermost service going down.\n"
