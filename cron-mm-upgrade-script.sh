@@ -30,7 +30,7 @@ function upgrade () {
     rm /tmp/mattermost-$latestVersion-linux-amd64.tar.gz
     systemctl stop mattermost
     cp -ra /opt/mattermost/ /opt/mattermost-back-$(date +'%F-%H-%M')/
-    find /opt/mattermost/ mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path mattermost/client -o -path mattermost/client/plugins -o -path mattermost/config -o -path mattermost/logs -o -path mattermost/plugins -o -path mattermost/data \) -prune \) | sort | sudo xargs rm -r
+    find /opt/mattermost/ /opt/mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path /opt/mattermost/client -o -path /opt/mattermost/client/plugins -o -path /opt/mattermost/config -o -path /opt/mattermost/logs -o -path /opt/mattermost/plugins -o -path /opt/mattermost/data \) -prune \) | sort | sudo xargs rm -r
     mv /opt/mattermost/plugins/ /opt/mattermost/plugins~ && mv /opt/mattermost/client/plugins/ /opt/mattermost/client/plugins~
     chown -hR mattermost:mattermost /tmp/mattermost-upgrade/
     cp -an /tmp/mattermost-upgrade/. /opt/mattermost/
@@ -39,7 +39,6 @@ function upgrade () {
     #cd /opt/mattermost && setcap cap_net_bind_service=+ep ./bin/mattermost
     cd /opt/mattermost && rsync -au plugins~/ plugins && rm -rf plugins~ && rsync -au client/plugins~/ client/plugins && rm -rf client/plugins~
     systemctl start mattermost
-    echo -e "Upgrade complete!"
 }
 
 # Compare versions
