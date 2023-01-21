@@ -23,10 +23,12 @@ As of right now, the script only works on the machine for which the Mattermost i
 
 The cron script should be fully automated. Requires the ROOT account to function. Script also assumes the 'mmctl' location is '/opt/mattermost/bin'. It is also recommened to save the output from the script to a custom log file as shown in the example.
 
+To use the automated 'post upgrade notification', export the variables before running the script.
+
 Root Crontab Example:
 
-```bash
+``` bash
 crontab -l
 
-0       4       *       *       1       /home/<USER>/cron-mm-upgrade-script.sh > /var/log/mm-upgrade.log
+0       4       *       *       1       MM_TEAM=<TEAM> MM_CHANNEL=<CHANNEL> /home/<USER>/cron-mm-upgrade-script.sh > /var/log/mm-upgrade.log
 ```

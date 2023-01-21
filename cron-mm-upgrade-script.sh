@@ -12,6 +12,7 @@ deployedVersion=$(/opt/mattermost/bin/mmctl version | grep -w "Version:" | awk '
 latestVersion=$(curl -s https://github.com/mattermost/mattermost-server/releases | grep 'mattermost-server/releases/tag' | awk '{print $7}' | cut -d/ -f6 | tr -d '"' | sort -r | uniq | head -1 | tr -d 'v')
 
 # Echo out versions for logging
+echo -e "Date/Time:" $(date)
 echo -e "Deployed Mattermost version: $deployedVersion"
 echo -e "Latest Mattermost version: $latestVersion"
 
@@ -39,6 +40,13 @@ function upgrade () {
     #cd /opt/mattermost && setcap cap_net_bind_service=+ep ./bin/mattermost
     cd /opt/mattermost && rsync -au plugins~/ plugins && rm -rf plugins~ && rsync -au client/plugins~/ client/plugins && rm -rf client/plugins~
     systemctl start mattermost
+    echo -e "Removing old Mattermost backup..."
+    sudo rm -rf $(ls mm-backup-test | grep 'mattermost-back' | sort | head -1)
+    if [[ -n $MM_TEAM && -n $MM_CHANNEL ]]; then
+        echo -e "Mattermost team and channel variables are set. Posting notification..."
+        /opt/mattermost/bin/mmctl post create $MM_TEAM:$MM_CHANNEL --message "@all The Mattermost instance has been upgraded to $latestVersion. Please report any issues to the System Administration channel."
+    fi
+    echo -e "Upgrade complete."
 }
 
 # Compare versions
