@@ -41,7 +41,7 @@ function upgrade () {
     cd /opt/mattermost && rsync -au plugins~/ plugins && rm -rf plugins~ && rsync -au client/plugins~/ client/plugins && rm -rf client/plugins~
     systemctl start mattermost
     echo -e "Removing old Mattermost backup..."
-    sudo rm -rf $(ls mm-backup-test | grep 'mattermost-back' | sort | head -1)
+    sudo rm -rf /opt/$(ls /opt/ | grep 'mattermost-back' | sort | head -1)
     if [[ -n $MM_TEAM && -n $MM_CHANNEL ]]; then
         echo -e "Mattermost team and channel variables are set. Posting notification..."
         /opt/mattermost/bin/mmctl post create $MM_TEAM:$MM_CHANNEL --message "@all The Mattermost instance has been upgraded to $latestVersion. Please report any issues to the System Administration channel."
