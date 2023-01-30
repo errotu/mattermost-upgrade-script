@@ -43,6 +43,7 @@ function upgrade () {
     echo -e "Removing old Mattermost backup..."
     rm -rf /opt/$(ls /opt/ | grep 'mattermost-back' | sort | head -1)
     if [[ -n $MM_TEAM && -n $MM_CHANNEL ]]; then
+        sleep 300
         echo -e "Mattermost team and channel variables are set. Posting notification..."
         /opt/mattermost/bin/mmctl post create $MM_TEAM:$MM_CHANNEL --message "@all The Mattermost instance has been upgraded to $latestVersion. Please report any issues to the System Administration channel."
     fi
