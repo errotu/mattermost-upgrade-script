@@ -29,16 +29,17 @@ function dbbackup () {
         if [[ $DATABASE == "mysql" ]]; then
             echo -e "Database is MySQL. Conducting database backup..."
             mysqldump -u root -p$(cat /etc/mattermost/config.json | grep -w "SqlSettings.DataSource" | awk '{print $2}' | cut -d: -f3 | cut -d@ -f1) mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
+            echo -e "Database backup complete."
         elif [[ $DATABASE == "postgres" ]]; then
             echo -e "Database is PostgreSQL. Conducting database backup..."
             pg_dump -U mmuser mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
+            echo -e "Database backup complete."
         else
             echo -e "Database variable is not set to MySQL or PostgreSQL. Database backup will not be conducted."
         fi
     else
         echo -e "Database variable is not set. Database backup will not be conducted."
     fi
-    echo -e "Database backup complete."
 }
 
 # Define upgrade function
