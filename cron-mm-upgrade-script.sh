@@ -28,7 +28,7 @@ function dbbackup () {
             mysqldump -u root -p$(cat /etc/mattermost/config.json | grep -w "SqlSettings.DataSource" | awk '{print $2}' | cut -d: -f3 | cut -d@ -f1) mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
         elif [[ $DATABASE == "postgres" ]]; then
             echo -e "Database is PostgreSQL. Conducting database backup..."
-            pg_dump -U mattermost mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
+            pg_dump -U mmuser mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
         else
             echo -e "Database variable is not set to MySQL or PostgreSQL. Database backup will not be conducted."
         fi
