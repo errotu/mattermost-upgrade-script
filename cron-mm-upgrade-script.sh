@@ -19,6 +19,25 @@ echo -e "Latest Mattermost version: $latestVersion"
 # Define version function
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
 
+# Define database backup function
+function dbbackup () {
+    if [[ -n $DATABASE ]]; then
+        echo -e "Database variable is set. Conducting database backup..."
+        if [[ $DATABASE == "mysql" ]]; then
+            echo -e "Database is MySQL. Conducting database backup..."
+            mysqldump -u root -p$(cat /etc/mattermost/config.json | grep -w "SqlSettings.DataSource" | awk '{print $2}' | cut -d: -f3 | cut -d@ -f1) mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
+        elif [[ $DATABASE == "postgres" ]]; then
+            echo -e "Database is PostgreSQL. Conducting database backup..."
+            pg_dump -U mattermost mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
+        else
+            echo -e "Database variable is not set to MySQL or PostgreSQL. Database backup will not be conducted."
+        fi
+    else
+        echo -e "Database variable is not set. Database backup will not be conducted."
+    fi
+    echo -e "Database backup complete."
+}
+
 # Define upgrade function
 function upgrade () {
     if curl -I "https://releases.mattermost.com/$latestVersion/mattermost-$latestVersion-linux-amd64.tar.gz" 2>&1 | grep -q -w "200\|301" ; then
@@ -30,6 +49,7 @@ function upgrade () {
     cd /tmp/ && tar -xf mattermost-$latestVersion-linux-amd64.tar.gz --transform='s,^[^/]\+,\0-upgrade,'
     rm /tmp/mattermost-$latestVersion-linux-amd64.tar.gz
     systemctl stop mattermost
+    dbbackup
     cp -ra /opt/mattermost/ /opt/mattermost-back-$(date +'%F-%H-%M')/
     find /opt/mattermost/ /opt/mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path /opt/mattermost/client -o -path /opt/mattermost/client/plugins -o -path /opt/mattermost/config -o -path /opt/mattermost/logs -o -path /opt/mattermost/plugins -o -path /opt/mattermost/data \) -prune \) | sort | sudo xargs rm -r
     mv /opt/mattermost/plugins/ /opt/mattermost/plugins~ && mv /opt/mattermost/client/plugins/ /opt/mattermost/client/plugins~

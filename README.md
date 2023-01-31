@@ -13,15 +13,19 @@ As of right now, the script only works on the machine for which the Mattermost i
     chmod +x mattermost-upgrade-script.sh
     ./mattermost-upgrade-script.sh
 
-## Future Enhancements
-
-- Built-in support to update remote Mattermost systems.
-
-- Additional options support to adhere to various deployment setups.
-
 ## Notes on Cron Script
 
 The cron script should be fully automated. Requires the ROOT account to function. Script also assumes the 'mmctl' location is '/opt/mattermost/bin'. It is also recommended to save the output from the script to a custom log file as shown in the example.
+
+To use the DB Backup function, export your DB type (mysql or postgres).
+Example:
+``` bash
+DATABASE=mysql
+```
+OR
+``` bash
+DATABASE=postgres
+```
 
 To use the automated 'post upgrade notification', export the variables before running the script.
 
@@ -30,7 +34,7 @@ Root Crontab Example:
 ``` bash
 crontab -l
 
-0       4       *       *       1       MM_TEAM=<TEAM> MM_CHANNEL=<CHANNEL> /home/<USER>/cron-mm-upgrade-script.sh > /var/log/mm-upgrade.log
+0       4       *       *       1       DATABASE=<DB_TYPE> MM_TEAM=<TEAM> MM_CHANNEL=<CHANNEL> /home/<USER>/cron-mm-upgrade-script.sh > /var/log/mm-upgrade.log
 ```
 
 Please be aware that you first need to [authenticate a user](https://docs.mattermost.com/manage/mmctl-command-line-tool.html#mmctl-auth-login) for being able to post the 'upgrade notification' with mmctl. To do this, execute the following command and follow the instructions:
