@@ -16,6 +16,9 @@ echo -e "Date/Time:" $(date)
 echo -e "Deployed Mattermost version: $deployedVersion"
 echo -e "Latest Mattermost version: $latestVersion"
 
+# Establish date/time variable
+date=$(date +'%F-%H-%M')
+
 # Define version function
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
 
@@ -25,10 +28,10 @@ function dbbackup () {
         echo -e "Database variable is set. Conducting database backup..."
         if [[ $DATABASE == "mysql" ]]; then
             echo -e "Database is MySQL. Conducting database backup..."
-            mysqldump -u root -p$(cat /etc/mattermost/config.json | grep -w "SqlSettings.DataSource" | awk '{print $2}' | cut -d: -f3 | cut -d@ -f1) mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
+            mysqldump -u root -p$(cat /etc/mattermost/config.json | grep -w "SqlSettings.DataSource" | awk '{print $2}' | cut -d: -f3 | cut -d@ -f1) mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
         elif [[ $DATABASE == "postgres" ]]; then
             echo -e "Database is PostgreSQL. Conducting database backup..."
-            pg_dump -U mmuser mattermost > /opt/mattermost-back-$(date +'%F-%H-%M')/mattermost-backup-$(date +'%F-%H-%M').sql
+            pg_dump -U mmuser mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
         else
             echo -e "Database variable is not set to MySQL or PostgreSQL. Database backup will not be conducted."
         fi
@@ -50,7 +53,7 @@ function upgrade () {
     rm /tmp/mattermost-$latestVersion-linux-amd64.tar.gz
     systemctl stop mattermost
     dbbackup
-    cp -ra /opt/mattermost/ /opt/mattermost-back-$(date +'%F-%H-%M')/
+    cp -ra /opt/mattermost/ /opt/mattermost-back-$date/
     find /opt/mattermost/ /opt/mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path /opt/mattermost/client -o -path /opt/mattermost/client/plugins -o -path /opt/mattermost/config -o -path /opt/mattermost/logs -o -path /opt/mattermost/plugins -o -path /opt/mattermost/data \) -prune \) | sort | sudo xargs rm -r
     mv /opt/mattermost/plugins/ /opt/mattermost/plugins~ && mv /opt/mattermost/client/plugins/ /opt/mattermost/client/plugins~
     chown -hR mattermost:mattermost /tmp/mattermost-upgrade/
