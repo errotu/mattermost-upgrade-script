@@ -15,7 +15,7 @@ As of right now, the script only works on the machine for which the Mattermost i
 
 ## Notes on Cron Script
 
-The cron script should be fully automated. Requires the ROOT account to function. Script also assumes the 'mmctl' location is '/opt/mattermost/bin'. It is also recommended to save the output from the script to a custom log file as shown in the example.
+The cron script should be fully automated. Requires the ROOT account to function. Script also assumes the 'mmctl' location is '/opt/mattermost/bin'. It is also recommended to save the output from the script to a custom log file as shown in the example. Also requires package 'jq' to run.
 
 To use the automated 'post upgrade notification', export the variables before running the script.
 
