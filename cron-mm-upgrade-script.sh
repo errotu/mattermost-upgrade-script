@@ -53,8 +53,8 @@ function upgrade () {
     cd ~/ && tar -xf mattermost-$latestVersion-linux-amd64.tar.gz --transform='s,^[^/]\+,\0-upgrade,'
     rm ~/mattermost-$latestVersion-linux-amd64.tar.gz
     supervisorctl stop mattermost
-    dbbackup
     cp -ra ~/mattermost/ ~/mattermost-back-$(date +'%F-%H-%M')/
+    dbbackup
     find ~/mattermost/ ~/mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path ~/mattermost/client -o -path ~/mattermost/client/plugins -o -path ~/mattermost/config -o -path ~/mattermost/logs -o -path ~/mattermost/plugins -o -path ~/mattermost/data \) -prune \) | sort | xargs rm -r
     mv ~/mattermost/plugins/ ~/mattermost/plugins~ && mv ~/mattermost/client/plugins/ ~/mattermost/client/plugins~
     #chown -hR mattermost:mattermost ~/mattermost-upgrade/
