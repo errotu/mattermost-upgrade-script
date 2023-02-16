@@ -31,11 +31,11 @@ function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4
 function dbbackup () {
     if [[ $DATABASE == "mysql" ]]; then
         echo -e "Database is MySQL. Conducting database backup..."
-        mysqldump -u $DB_USER -p $DB_PASS mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
+        mysqldump -u $DB_USER -p $DB_PASS mattermost > ~/mattermost-back-$date/database-backup-$date.sql
         echo -e "Database backup complete."
     elif [[ $DATABASE == "postgres" ]]; then
         echo -e "Database is PostgreSQL. Conducting database backup..."
-        pg_dump -U $DB_USER mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
+        pg_dump -U $DB_USER mattermost > ~/mattermost-back-$date/database-backup-$date.sql
         echo -e "Database backup complete."
     else
         echo -e "Unable to determine database type. A backup will not be conducted."
