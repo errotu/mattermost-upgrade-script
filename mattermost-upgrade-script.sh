@@ -3,6 +3,8 @@
 ################################################################################################
 # The following script updates the local Mattermost instance to a version entered by the user. #
 # A backup of the instance will be taken.                                                      #
+# A script by KallanX, https://github.com/KallanX/mattermost-upgrade-script 		       #
+# Adjusted by Erik Tuchtfeld								       #
 ################################################################################################
 
 # Define prompts and colors
@@ -105,80 +107,80 @@ prompts command
 echo "rm mattermost-$MMVERSION-linux-amd64.tar.gz"
 rm mattermost-$MMVERSION-linux-amd64.tar.gz
 
-# Stop Mattermost service via SystemCTL
+# Stop Mattermost service via supervisorctl
 prompts info
 echo -e "Processing upgrade of Mattermost. Mattermost service going down.\n"
 
 prompts command
-echo -e "sudo systemctl stop mattermost\n"
-sudo systemctl stop mattermost
+echo -e "supervisorctl stop mattermost\n"
+supervisorctl stop mattermost
 
 # Backup data and application
 prompts info
 echo -e "Backing up Mattermost data and application.\n"
 
 prompts command
-echo -e "cd /opt/ && sudo cp -ra mattermost/ mattermost-back-$(date +'%F-%H-%M')/\n"
-cd /opt/ && sudo cp -ra mattermost/ mattermost-back-$(date +'%F-%H-%M')/
+echo -e "cd ~/ && cp -ra mattermost/ mattermost-back-$(date +'%F-%H-%M')/\n"
+cd ~/ && cp -ra mattermost/ mattermost-back-$(date +'%F-%H-%M')/
 
 # Remove all files except special directories in the current Mattermost directory
 prompts info
 echo -e "Removing all files except special directories in the current Mattermost directory.\n"
 
 prompts command
-echo "sudo find mattermost/ mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path mattermost/client -o -path mattermost/client/plugins -o -path mattermost/config -o -path mattermost/logs -o -path mattermost/plugins -o -path mattermost/data \) -prune \) | sort | sudo xargs rm -r"
+echo "find mattermost/ mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path mattermost/client -o -path mattermost/client/plugins -o -path mattermost/config -o -path mattermost/logs -o -path mattermost/plugins -o -path mattermost/data \) -prune \) | sort | xargs rm -r"
 echo
-sudo find mattermost/ mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path mattermost/client -o -path mattermost/client/plugins -o -path mattermost/config -o -path mattermost/logs -o -path mattermost/plugins -o -path mattermost/data \) -prune \) | sort | sudo xargs rm -r
+find mattermost/ mattermost/client/ -mindepth 1 -maxdepth 1 \! \( -type d \( -path mattermost/client -o -path mattermost/client/plugins -o -path mattermost/config -o -path mattermost/logs -o -path mattermost/plugins -o -path mattermost/data \) -prune \) | sort | xargs rm -r
 
 # Rename the plugins directory as to not interfere with the new installation
 prompts info
 echo -e "Renaming the plugins directory as to not interfere with the new installation.\n"
 
 prompts command
-echo -e "sudo mv mattermost/plugins/ mattermost/plugins~ && sudo mv mattermost/client/plugins/ mattermost/client/plugins~\n"
-sudo mv mattermost/plugins/ mattermost/plugins~ && sudo mv mattermost/client/plugins/ mattermost/client/plugins~
+echo -e "mv mattermost/plugins/ mattermost/plugins~ && mv mattermost/client/plugins/ mattermost/client/plugins~\n"
+mv mattermost/plugins/ mattermost/plugins~ && mv mattermost/client/plugins/ mattermost/client/plugins~
 
 # Change ownership of new Mattermost files to Mattermost user
-prompts info
-echo -e "Changing ownership of new Mattermost files to Mattermost user.\n"
+#prompts info
+#echo -e "Changing ownership of new Mattermost files to Mattermost user.\n"
 
-prompts command
-echo -e "sudo chown -hR mattermost:mattermost ~/mattermost-upgrade/\n"
-sudo chown -hR mattermost:mattermost ~/mattermost-upgrade/
+#prompts command
+#echo -e "chown -hR mattermost:mattermost ~/mattermost-upgrade/\n"
+#chown -hR mattermost:mattermost ~/mattermost-upgrade/
 
 # Copy new files to installation directory and remove temporary files
 prompts info
 echo -e "Copy new files to installation directory and remove temporary files.\n"
 
 prompts command
-echo -e "sudo cp -an ~/mattermost-upgrade/. mattermost/"
-echo -e "sudo rm -r ~/mattermost-upgrade/\n"
-sudo cp -an ~/mattermost-upgrade/. mattermost/
-sudo rm -r ~/mattermost-upgrade/
+echo -e "cp -an ~/mattermost-upgrade/. mattermost/"
+echo -e "rm -r ~/mattermost-upgrade/\n"
+cp -an ~/mattermost-upgrade/. mattermost/
+rm -r ~/mattermost-upgrade/
 
 # Active CAP_NET_BIND_SERVICE to allow Mattermost to bind to low ports - uncomment the below commands if the Mattermost instance is serving web requests
 #prompts info
 #echo -e "Activating CAP_NET_BIND_SERVICE.\n"
 
 #prompts command
-#echo -e "cd /opt/mattermost && sudo setcap cap_net_bind_service=+ep ./bin/mattermost\n"
-#cd /opt/mattermost && sudo setcap cap_net_bind_service=+ep ./bin/mattermost
+#echo -e "cd ~/mattermost && setcap cap_net_bind_service=+ep ./bin/mattermost\n"
+#cd ~/mattermost && setcap cap_net_bind_service=+ep ./bin/mattermost
 
 # Reinstate plugins directories
 prompts info
 echo -e "Reinstating plugins directories.\n"
 
 prompts command
-echo -e "cd /opt/mattermost && sudo rsync -au plugins~/ plugins && sudo rm -rf plugins~ && sudo rsync -au client/plugins~/ client/plugins && sudo rm -rf client/plugins~\n"
-cd /opt/mattermost && sudo rsync -au plugins~/ plugins && sudo rm -rf plugins~ && sudo rsync -au client/plugins~/ client/plugins && sudo rm -rf client/plugins~
+echo -e "cd ~/mattermost && rsync -au plugins~/ plugins && rm -rf plugins~ && rsync -au client/plugins~/ client/plugins && rm -rf client/plugins~\n"
+cd ~/mattermost && rsync -au plugins~/ plugins && rm -rf plugins~ && rsync -au client/plugins~/ client/plugins && rm -rf client/plugins~
 
-# Start Mattermost service via SystemCTL
+# Start Mattermost service via supervisorctl
 prompts info
 echo -e "Starting Mattermost service.\n"
 
 prompts command
-echo -e "sudo systemctl start mattermost\n"
-sudo systemctl start mattermost
+echo -e "supervisorctl start mattermost\n"
+supervisorctl start mattermost
 
 # Upgrade complete
 prompts complete
