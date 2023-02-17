@@ -35,7 +35,7 @@ function dbbackup () {
         echo -e "Database backup complete."
     elif [[ $DATABASE == "postgres" ]]; then
         echo -e "Database is PostgreSQL. Conducting database backup..."
-        pg_dump -U $DB_USER mattermost > /opt/mattermost-back-$date/database-backup-$date.sql
+        su postgres -c "pg_dump -U $DB_USER mattermost > /var/lib/postgresql/dump/mattermost-back-$date.sql"
         echo -e "Database backup complete."
     else
         echo -e "Unable to determine database type. A backup will not be conducted."
